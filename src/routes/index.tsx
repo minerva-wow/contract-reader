@@ -1,7 +1,50 @@
 import { component$, useSignal, $, useVisibleTask$ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
+import { server$ } from '@builder.io/qwik-city';
 import { ethers } from 'ethers';
 import { LuShare2, LuExternalLink } from '@qwikest/icons/lucide';
+
+// Server-side function - runs only on the server
+const readContractOnServer = server$(async function(address: string) {
+  const ALCHEMY_KEY = this.env.get('PUBLIC_ALCHEMY_API_KEY') || 'demo';
+  const provider = new ethers.JsonRpcProvider(`https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_KEY}`);
+  
+  const code = await provider.getCode(address);
+  
+  if (code === '0x') {
+    throw new Error('This address is not a contract or does not exist');
+  }
+
+  const ETHERSCAN_API_KEY = this.env.get('PUBLIC_ETHERSCAN_API_KEY') || '';
+  const etherscanUrl = `https://api.etherscan.io/v2/api?chainid=11155111&module=contract&action=getabi&address=${address}${ETHERSCAN_API_KEY ? '&apikey=' + ETHERSCAN_API_KEY : ''}`;
+
+  const response = await fetch(etherscanUrl);
+  const data = await response.json();
+
+  if (data.status !== '1' || !data.result) {
+    throw new Error('Contract not verified on Etherscan.\n\nPlease verify your contract first.');
+  }
+
+  const abi = JSON.parse(data.result);
+  const contract = new ethers.Contract(address, abi, provider);
+
+  const stringFunctions = abi.filter((item: any) => 
+    item.type === 'function' && 
+    (item.stateMutability === 'view' || item.stateMutability === 'pure') &&
+    item.inputs.length === 0 &&
+    item.outputs?.length === 1 &&
+    item.outputs[0].type === 'string'
+  );
+
+  if (stringFunctions.length === 0) {
+    throw new Error('No message found in this contract.');
+  }
+
+  const func = stringFunctions[0];
+  const result = await contract[func.name]();
+  
+  return result;
+});
 
 export default component$(() => {
   const contractAddress = useSignal('');
@@ -11,14 +54,14 @@ export default component$(() => {
   const isTyping = useSignal(false);
   const shareUrl = useSignal('');
 
-  // 提取读取逻辑为独立函数
+  // Client-side function that calls the server function
   const executeRead = $(async (address: string) => {
     if (!address.trim()) {
       error.value = 'Please enter a contract address';
       return;
     }
 
-    // 验证地址格式
+    // Validate address format
     if (!ethers.isAddress(address)) {
       error.value = 'Invalid contract address format, please check and try again';
       return;
@@ -29,53 +72,13 @@ export default component$(() => {
     contractResult.value = '';
 
     try {
-      const ALCHEMY_KEY = import.meta.env.PUBLIC_ALCHEMY_API_KEY || 'demo';
-      const provider = new ethers.JsonRpcProvider(`https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_KEY}`);
-      
-      const code = await provider.getCode(address);
-      
-      if (code === '0x') {
-        error.value = 'This address is not a contract or does not exist';
-        isLoading.value = false;
-        return;
-      }
+      // Call server-side function
+      const result = await readContractOnServer(address);
 
-      const ETHERSCAN_API_KEY = import.meta.env.PUBLIC_ETHERSCAN_API_KEY || '';
-      const etherscanUrl = `https://api.etherscan.io/v2/api?chainid=11155111&module=contract&action=getabi&address=${address}${ETHERSCAN_API_KEY ? '&apikey=' + ETHERSCAN_API_KEY : ''}`;
-
-      const response = await fetch(etherscanUrl);
-      const data = await response.json();
-
-      if (data.status !== '1' || !data.result) {
-        error.value = 'Contract not verified on Etherscan.\n\nPlease verify your contract first.';
-        isLoading.value = false;
-        return;
-      }
-
-      const abi = JSON.parse(data.result);
-      const contract = new ethers.Contract(address, abi, provider);
-
-      const stringFunctions = abi.filter((item: any) => 
-        item.type === 'function' && 
-        (item.stateMutability === 'view' || item.stateMutability === 'pure') &&
-        item.inputs.length === 0 &&
-        item.outputs?.length === 1 &&
-        item.outputs[0].type === 'string'
-      );
-
-      if (stringFunctions.length === 0) {
-        error.value = 'No message found in this contract.';
-        isLoading.value = false;
-        return;
-      }
-
-      const func = stringFunctions[0];
-      const result = await contract[func.name]();
-
-      // 生成分享链接
+      // Generate share URL
       shareUrl.value = `${window.location.origin}${window.location.pathname}?address=${address}`;
 
-      // 打字机效果
+      // Typewriter effect
       isTyping.value = true;
       const chars = result.split('');
       contractResult.value = '';
@@ -94,7 +97,7 @@ export default component$(() => {
     }
   });
 
-  // 按钮点击时调用
+  // Button click handler
   const readContract = $(async () => {
     await executeRead(contractAddress.value);
   });
@@ -109,7 +112,7 @@ export default component$(() => {
     }
   });
 
-  // 复制分享链接
+  // Copy share link
   const copyShareLink = $(async () => {
     try {
       await navigator.clipboard.writeText(shareUrl.value);
@@ -119,7 +122,7 @@ export default component$(() => {
     }
   });
 
-  // 在 Etherscan 查看
+  // View on Etherscan
   const viewOnEtherscan = $(() => {
     const url = `https://sepolia.etherscan.io/address/${contractAddress.value}`;
     window.open(url, '_blank');
@@ -128,7 +131,7 @@ export default component$(() => {
   return (
     <div class="min-h-screen bg-linear-to-br from-gray-100 via-gray-50 to-gray-100 flex items-center justify-center p-4">
       <div class="w-full max-w-3xl">
-        {/* 标题 */}
+        {/* Title */}
         <div class="text-center mb-8">
           <h1 class="text-5xl font-bold text-gray-900 mb-3 tracking-tight">
             Message Reader
@@ -138,7 +141,7 @@ export default component$(() => {
           </p>
         </div>
 
-        {/* 输入框 */}
+        {/* Input */}
         <div class="flex gap-3 mb-6">
           <input
             type="text"
@@ -164,19 +167,19 @@ export default component$(() => {
           </button>
         </div>
 
-        {/* 错误信息 */}
+        {/* Error message */}
         {error.value && (
           <div class="mb-6 p-4 bg-red-50/70 backdrop-blur-xl border border-red-100 rounded-2xl text-red-700 text-sm whitespace-pre-wrap shadow-lg">
             {error.value}
           </div>
         )}
 
-        {/* 结果显示区域 */}
+        {/* Result display area */}
         {contractResult.value && (
           <div class="bg-white/50 backdrop-blur-2xl rounded-2xl p-6 border border-white/80 relative shadow-xl mb-6">
-            {/* 右上角按钮组 */}
+            {/* Top-right button group */}
             <div class="absolute top-4 right-4 flex gap-2">
-              {/* Etherscan 查看按钮 */}
+              {/* View on Etherscan button */}
               <button
                 onClick$={viewOnEtherscan}
                 class="p-2.5 bg-white/60 hover:bg-white/80 backdrop-blur-xl rounded-xl transition-all"
@@ -185,7 +188,7 @@ export default component$(() => {
                 <LuExternalLink class="w-4.5 h-4.5 text-gray-700" />
               </button>
               
-              {/* 分享按钮 */}
+              {/* Share button */}
               <button
                 onClick$={copyShareLink}
                 class="p-2.5 bg-white/60 hover:bg-white/80 backdrop-blur-xl rounded-xl transition-all"
@@ -201,7 +204,7 @@ export default component$(() => {
           </div>
         )}
 
-        {/* 示例 */}
+        {/* Example */}
         <div class="text-center">
           <p class="text-gray-500 text-sm mb-3">Try an example:</p>
           <button
@@ -214,7 +217,7 @@ export default component$(() => {
           </button>
         </div>
 
-        {/* 底部 */}
+        {/* Footer */}
         <div class="text-center mt-8 text-gray-500 text-sm">
           <p>Powered by Qwik + Ethers.js</p>
           <p class="text-xs mt-1 text-gray-400">
