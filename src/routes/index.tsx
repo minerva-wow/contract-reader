@@ -99,7 +99,7 @@ export default component$(() => {
     await executeRead(contractAddress.value);
   });
 
-  // 页面加载时从 URL 读取地址并自动执行
+  // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(async () => {
     const params = new URLSearchParams(window.location.search);
     const address = params.get('address');
@@ -114,7 +114,7 @@ export default component$(() => {
     try {
       await navigator.clipboard.writeText(shareUrl.value);
       alert('Share link copied!');
-    } catch (err) {
+    } catch {
       alert('Failed to copy link');
     }
   });
@@ -126,7 +126,7 @@ export default component$(() => {
   });
 
   return (
-    <div class="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-gray-100 flex items-center justify-center p-4">
+    <div class="min-h-screen bg-linear-to-br from-gray-100 via-gray-50 to-gray-100 flex items-center justify-center p-4">
       <div class="w-full max-w-3xl">
         {/* 标题 */}
         <div class="text-center mb-8">
@@ -195,7 +195,7 @@ export default component$(() => {
               </button>
             </div>
 
-            <pre class="text-gray-800 whitespace-pre-wrap break-words leading-relaxed font-mono text-sm pr-20">
+            <pre class="text-gray-800 whitespace-pre-wrap wrap-break-word leading-relaxed font-mono text-sm pr-20">
 {contractResult.value}{isTyping.value && <span class="animate-blink">|</span>}
             </pre>
           </div>
