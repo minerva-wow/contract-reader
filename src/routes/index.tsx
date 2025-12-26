@@ -2,7 +2,7 @@ import { component$, useSignal, $, useVisibleTask$ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
 import { server$ } from '@builder.io/qwik-city';
 import { ethers } from 'ethers';
-import { LuShare2, LuExternalLink } from '@qwikest/icons/lucide';
+import { LuShare2, LuExternalLink, LuCheck, LuX } from '@qwikest/icons/lucide';
 
 // Server-side function - runs only on the server
 const readContractOnServer = server$(async function(address: string) {
@@ -53,6 +53,7 @@ export default component$(() => {
   const error = useSignal('');
   const isTyping = useSignal(false);
   const shareUrl = useSignal('');
+  const copyStatus = useSignal<'idle' | 'success' | 'failed'>('idle');
 
   // Client-side function that calls the server function
   const executeRead = $(async (address: string) => {
@@ -116,9 +117,17 @@ export default component$(() => {
   const copyShareLink = $(async () => {
     try {
       await navigator.clipboard.writeText(shareUrl.value);
-      alert('Share link copied!');
+      copyStatus.value = 'success';
+      // Reset after 2 seconds
+      setTimeout(() => {
+        copyStatus.value = 'idle';
+      }, 2000);
     } catch {
-      alert('Failed to copy link');
+      copyStatus.value = 'failed';
+      // Reset after 2 seconds
+      setTimeout(() => {
+        copyStatus.value = 'idle';
+      }, 2000);
     }
   });
 
@@ -192,9 +201,21 @@ export default component$(() => {
               <button
                 onClick$={copyShareLink}
                 class="p-2.5 bg-white/60 hover:bg-white/80 backdrop-blur-xl rounded-xl transition-all"
-                title="Copy share link"
+                title={
+                  copyStatus.value === 'success' 
+                    ? 'Copied!' 
+                    : copyStatus.value === 'failed'
+                    ? 'Copy failed'
+                    : 'Copy share link'
+                }
               >
-                <LuShare2 class="w-4.5 h-4.5 text-gray-700" />
+                {copyStatus.value === 'success' ? (
+                  <LuCheck class="w-4.5 h-4.5 text-gray-700" />
+                ) : copyStatus.value === 'failed' ? (
+                  <LuX class="w-4.5 h-4.5 text-gray-700" />
+                ) : (
+                  <LuShare2 class="w-4.5 h-4.5 text-gray-700" />
+                )}
               </button>
             </div>
 
