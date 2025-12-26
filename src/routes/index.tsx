@@ -138,20 +138,20 @@ export default component$(() => {
   });
 
   return (
-    <div class="min-h-screen bg-linear-to-br from-gray-100 via-gray-50 to-gray-100 flex items-center justify-center p-4">
+    <div class="min-h-screen bg-linear-to-br from-gray-100 via-gray-50 to-gray-100 flex items-center justify-center p-4 sm:p-6">
       <div class="w-full max-w-3xl">
         {/* Title */}
-        <div class="text-center mb-8">
-          <h1 class="text-5xl font-bold text-gray-900 mb-3 tracking-tight">
+        <div class="text-center mb-6 sm:mb-8">
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2 sm:mb-3 tracking-tight">
             Message Reader
           </h1>
-          <p class="text-gray-600 text-base max-w-2xl mx-auto">
+          <p class="text-gray-600 text-sm sm:text-base max-w-2xl mx-auto px-2">
             Sadly, blockchain explorers often fail to properly display messages — truncating text, breaking emojis, and ignoring line breaks. That's why I built this tool.
           </p>
         </div>
 
         {/* Input */}
-        <div class="flex gap-3 mb-6">
+        <div class="flex flex-col sm:flex-row gap-3 mb-6">
           <input
             type="text"
             value={contractAddress.value}
@@ -165,12 +165,12 @@ export default component$(() => {
               }
             }}
             placeholder="Contract address (0x...)"
-            class="flex-1 bg-white/60 backdrop-blur-xl text-gray-800 px-5 py-3.5 rounded-2xl border border-white/80 focus:border-gray-300 focus:outline-none focus:bg-white/70 transition-all placeholder:text-gray-400 shadow-lg"
+            class="flex-1 bg-white/60 backdrop-blur-xl text-gray-800 px-4 sm:px-5 py-3 sm:py-3.5 rounded-2xl border border-white/80 focus:border-gray-300 focus:outline-none focus:bg-white/70 transition-all placeholder:text-gray-400 shadow-lg text-sm sm:text-base"
           />
           <button
             onClick$={readContract}
             disabled={isLoading.value}
-            class="px-8 py-3.5 bg-white/70 backdrop-blur-xl hover:bg-white/80 text-gray-800 rounded-2xl transition-all disabled:opacity-40 disabled:cursor-not-allowed border border-white/80 font-medium shadow-lg"
+            class="px-6 sm:px-8 py-3 sm:py-3.5 bg-white/70 backdrop-blur-xl hover:bg-white/80 text-gray-800 rounded-2xl transition-all disabled:opacity-40 disabled:cursor-not-allowed border border-white/80 font-medium shadow-lg whitespace-nowrap"
           >
             {isLoading.value ? 'Reading...' : 'Read'}
           </button>
@@ -178,29 +178,29 @@ export default component$(() => {
 
         {/* Error message */}
         {error.value && (
-          <div class="mb-6 p-4 bg-red-50/70 backdrop-blur-xl border border-red-100 rounded-2xl text-red-700 text-sm whitespace-pre-wrap shadow-lg">
+          <div class="mb-6 p-3 sm:p-4 bg-red-50/70 backdrop-blur-xl border border-red-100 rounded-2xl text-red-700 text-xs sm:text-sm whitespace-pre-wrap shadow-lg">
             {error.value}
           </div>
         )}
 
         {/* Result display area */}
         {contractResult.value && (
-          <div class="bg-white/50 backdrop-blur-2xl rounded-2xl p-6 border border-white/80 relative shadow-xl mb-6">
+          <div class="bg-white/50 backdrop-blur-2xl rounded-2xl p-4 sm:p-6 border border-white/80 relative shadow-xl mb-6">
             {/* Top-right button group */}
-            <div class="absolute top-4 right-4 flex gap-2">
+            <div class="absolute top-3 sm:top-4 right-3 sm:right-4 flex gap-1.5 sm:gap-2">
               {/* View on Etherscan button */}
               <button
                 onClick$={viewOnEtherscan}
-                class="p-2.5 bg-white/60 hover:bg-white/80 backdrop-blur-xl rounded-xl transition-all"
+                class="p-2 sm:p-2.5 bg-white/60 hover:bg-white/80 backdrop-blur-xl rounded-lg sm:rounded-xl transition-all"
                 title="View on Etherscan"
               >
-                <LuExternalLink class="w-4.5 h-4.5 text-gray-700" />
+                <LuExternalLink class="w-4 h-4 sm:w-4.5 sm:h-4.5 text-gray-700" />
               </button>
               
               {/* Share button */}
               <button
                 onClick$={copyShareLink}
-                class="p-2.5 bg-white/60 hover:bg-white/80 backdrop-blur-xl rounded-xl transition-all"
+                class="p-2 sm:p-2.5 bg-white/60 hover:bg-white/80 backdrop-blur-xl rounded-lg sm:rounded-xl transition-all"
                 title={
                   copyStatus.value === 'success' 
                     ? 'Copied!' 
@@ -210,16 +210,16 @@ export default component$(() => {
                 }
               >
                 {copyStatus.value === 'success' ? (
-                  <LuCheck class="w-4.5 h-4.5 text-gray-700" />
+                  <LuCheck class="w-4 h-4 sm:w-4.5 sm:h-4.5 text-gray-700" />
                 ) : copyStatus.value === 'failed' ? (
-                  <LuX class="w-4.5 h-4.5 text-gray-700" />
+                  <LuX class="w-4 h-4 sm:w-4.5 sm:h-4.5 text-gray-700" />
                 ) : (
-                  <LuShare2 class="w-4.5 h-4.5 text-gray-700" />
+                  <LuShare2 class="w-4 h-4 sm:w-4.5 sm:h-4.5 text-gray-700" />
                 )}
               </button>
             </div>
 
-            <pre class="text-gray-800 whitespace-pre-wrap wrap-break-word leading-relaxed font-mono text-sm pr-20">
+            <pre class="text-gray-800 whitespace-pre-wrap break-words leading-relaxed font-mono text-xs sm:text-sm pr-16 sm:pr-20">
 {contractResult.value}{isTyping.value && <span class="animate-blink">|</span>}
             </pre>
           </div>
@@ -227,19 +227,19 @@ export default component$(() => {
 
         {/* Example */}
         <div class="text-center">
-          <p class="text-gray-500 text-sm mb-3">Try an example:</p>
+          <p class="text-gray-500 text-xs sm:text-sm mb-2 sm:mb-3">Try an example:</p>
           <button
             onClick$={() => {
               contractAddress.value = '0x01C768D9B8FfCb83DC95dB0EF5c7BbE8564816ca';
             }}
-            class="px-4 py-2.5 bg-white/60 hover:bg-white/70 backdrop-blur-xl text-gray-700 text-sm rounded-xl transition-all border border-white/80 shadow-lg"
+            class="px-3 sm:px-4 py-2 sm:py-2.5 bg-white/60 hover:bg-white/70 backdrop-blur-xl text-gray-700 text-xs sm:text-sm rounded-xl transition-all border border-white/80 shadow-lg"
           >
             ?
           </button>
         </div>
 
         {/* Footer */}
-        <div class="text-center mt-8 text-gray-500 text-sm">
+        <div class="text-center mt-6 sm:mt-8 text-gray-500 text-xs sm:text-sm px-2">
           <p>Powered by Qwik + Ethers.js</p>
           <p class="text-xs mt-1 text-gray-400">
             Currently supports verified contracts on Ethereum Mainnet with a single string-returning view function.
