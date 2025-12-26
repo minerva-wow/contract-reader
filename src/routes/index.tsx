@@ -185,7 +185,7 @@ export default component$(() => {
 
         {/* Result display area */}
         {contractResult.value && (
-          <div class="bg-white/50 backdrop-blur-2xl rounded-2xl p-4 sm:p-6 border border-white/80 relative shadow-xl mb-6">
+          <div class="bg-white/50 backdrop-blur-2xl rounded-2xl p-4 sm:p-6 border border-white/80 relative shadow-xl mb-6 min-h-[100px]">
             {/* Button group - mobile vertical on right, desktop horizontal on right */}
             <div class="flex flex-col sm:flex-row gap-2 absolute top-4 right-4">
               {/* View on Etherscan button */}
@@ -219,7 +219,7 @@ export default component$(() => {
               </button>
             </div>
 
-            <pre class="text-gray-800 whitespace-pre-wrap wrap-break-word leading-relaxed font-mono text-xs sm:text-sm pr-20">
+            <pre class="text-gray-800 whitespace-pre-wrap wrap-break-word leading-relaxed font-mono text-xs sm:text-sm pr-14">
 {contractResult.value}{isTyping.value && <span class="animate-blink">|</span>}
             </pre>
           </div>
