@@ -186,8 +186,8 @@ export default component$(() => {
         {/* Result display area */}
         {contractResult.value && (
           <div class="bg-white/50 backdrop-blur-2xl rounded-2xl p-4 sm:p-6 border border-white/80 relative shadow-xl mb-6">
-            {/* Button group - mobile on top, desktop on right */}
-            <div class="flex gap-2 mb-3 sm:mb-0 sm:absolute sm:top-4 sm:right-4">
+            {/* Button group - mobile on top right, desktop on right */}
+            <div class="flex gap-2 mb-3 justify-end sm:mb-0 sm:absolute sm:top-4 sm:right-4">
               {/* View on Etherscan button */}
               <button
                 onClick$={viewOnEtherscan}
