@@ -186,21 +186,21 @@ export default component$(() => {
         {/* Result display area */}
         {contractResult.value && (
           <div class="bg-white/50 backdrop-blur-2xl rounded-2xl p-4 sm:p-6 border border-white/80 relative shadow-xl mb-6">
-            {/* Top-right button group */}
-            <div class="absolute top-3 sm:top-4 right-3 sm:right-4 flex gap-1.5 sm:gap-2">
+            {/* Button group - mobile on top, desktop on right */}
+            <div class="flex gap-2 mb-3 sm:mb-0 sm:absolute sm:top-4 sm:right-4">
               {/* View on Etherscan button */}
               <button
                 onClick$={viewOnEtherscan}
-                class="p-2 sm:p-2.5 bg-white/60 hover:bg-white/80 backdrop-blur-xl rounded-lg sm:rounded-xl transition-all"
+                class="p-2.5 bg-white/60 hover:bg-white/80 backdrop-blur-xl rounded-xl transition-all"
                 title="View on Etherscan"
               >
-                <LuExternalLink class="w-4 h-4 sm:w-4.5 sm:h-4.5 text-gray-700" />
+                <LuExternalLink class="w-4.5 h-4.5 text-gray-700" />
               </button>
               
               {/* Share button */}
               <button
                 onClick$={copyShareLink}
-                class="p-2 sm:p-2.5 bg-white/60 hover:bg-white/80 backdrop-blur-xl rounded-lg sm:rounded-xl transition-all"
+                class="p-2.5 bg-white/60 hover:bg-white/80 backdrop-blur-xl rounded-xl transition-all"
                 title={
                   copyStatus.value === 'success' 
                     ? 'Copied!' 
@@ -210,16 +210,16 @@ export default component$(() => {
                 }
               >
                 {copyStatus.value === 'success' ? (
-                  <LuCheck class="w-4 h-4 sm:w-4.5 sm:h-4.5 text-gray-700" />
+                  <LuCheck class="w-4.5 h-4.5 text-gray-700" />
                 ) : copyStatus.value === 'failed' ? (
-                  <LuX class="w-4 h-4 sm:w-4.5 sm:h-4.5 text-gray-700" />
+                  <LuX class="w-4.5 h-4.5 text-gray-700" />
                 ) : (
-                  <LuShare2 class="w-4 h-4 sm:w-4.5 sm:h-4.5 text-gray-700" />
+                  <LuShare2 class="w-4.5 h-4.5 text-gray-700" />
                 )}
               </button>
             </div>
 
-            <pre class="text-gray-800 whitespace-pre-wrap break-words leading-relaxed font-mono text-xs sm:text-sm pr-16 sm:pr-20">
+            <pre class="text-gray-800 whitespace-pre-wrap wrap-break-word leading-relaxed font-mono text-xs sm:text-sm sm:pr-20">
 {contractResult.value}{isTyping.value && <span class="animate-blink">|</span>}
             </pre>
           </div>
