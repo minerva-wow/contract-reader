@@ -191,7 +191,7 @@ export default component$(() => {
               {/* View on Etherscan button */}
               <button
                 onClick$={viewOnEtherscan}
-                class="p-2.5 bg-white/60 hover:bg-white/80 backdrop-blur-xl rounded-xl transition-all"
+                class="p-2.5 hover:bg-white/20 rounded-xl transition-all"
                 title="View on Etherscan"
               >
                 <LuExternalLink class="w-4.5 h-4.5 text-gray-700" />
@@ -200,7 +200,7 @@ export default component$(() => {
               {/* Share button */}
               <button
                 onClick$={copyShareLink}
-                class="p-2.5 bg-white/60 hover:bg-white/80 backdrop-blur-xl rounded-xl transition-all"
+                class="p-2.5 hover:bg-white/20 rounded-xl transition-all"
                 title={
                   copyStatus.value === 'success' 
                     ? 'Copied!' 
