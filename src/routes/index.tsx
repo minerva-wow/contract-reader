@@ -185,7 +185,7 @@ export default component$(() => {
 
         {/* Result display area */}
         {contractResult.value && (
-          <div class="bg-white/50 backdrop-blur-2xl rounded-2xl p-4 sm:p-6 border border-white/80 relative shadow-xl mb-6 min-h-[100px]">
+          <div class="bg-white/50 backdrop-blur-2xl rounded-2xl p-4 sm:p-6 border border-white/80 relative shadow-xl mb-6 min-h-[120px]">
             {/* Button group - mobile vertical on right, desktop horizontal on right */}
             <div class="flex flex-col sm:flex-row gap-2 absolute top-4 right-4">
               {/* View on Etherscan button */}
