@@ -133,7 +133,7 @@ export default component$(() => {
 
   // View on Etherscan
   const viewOnEtherscan = $(() => {
-    const url = `https://etherscan.io/address/${contractAddress.value}`;
+    const url = `https://etherscan.io/address/${contractAddress.value}#code`;
     window.open(url, '_blank');
   });
 
