@@ -7,7 +7,7 @@ import { LuShare2, LuExternalLink } from '@qwikest/icons/lucide';
 // Server-side function - runs only on the server
 const readContractOnServer = server$(async function(address: string) {
   const ALCHEMY_KEY = this.env.get('PUBLIC_ALCHEMY_API_KEY') || 'demo';
-  const provider = new ethers.JsonRpcProvider(`https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_KEY}`);
+  const provider = new ethers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`);
   
   const code = await provider.getCode(address);
   
@@ -16,7 +16,7 @@ const readContractOnServer = server$(async function(address: string) {
   }
 
   const ETHERSCAN_API_KEY = this.env.get('PUBLIC_ETHERSCAN_API_KEY') || '';
-  const etherscanUrl = `https://api.etherscan.io/v2/api?chainid=11155111&module=contract&action=getabi&address=${address}${ETHERSCAN_API_KEY ? '&apikey=' + ETHERSCAN_API_KEY : ''}`;
+  const etherscanUrl = `https://api.etherscan.io/v2/api?chainid=1&module=contract&action=getabi&address=${address}${ETHERSCAN_API_KEY ? '&apikey=' + ETHERSCAN_API_KEY : ''}`;
 
   const response = await fetch(etherscanUrl);
   const data = await response.json();
@@ -124,7 +124,7 @@ export default component$(() => {
 
   // View on Etherscan
   const viewOnEtherscan = $(() => {
-    const url = `https://sepolia.etherscan.io/address/${contractAddress.value}`;
+    const url = `https://etherscan.io/address/${contractAddress.value}`;
     window.open(url, '_blank');
   });
 
@@ -209,7 +209,7 @@ export default component$(() => {
           <p class="text-gray-500 text-sm mb-3">Try an example:</p>
           <button
             onClick$={() => {
-              contractAddress.value = '0xDdA7C517b333bb30EB20581929738Cf47A02149b';
+              contractAddress.value = '0x01C768D9B8FfCb83DC95dB0EF5c7BbE8564816ca';
             }}
             class="px-4 py-2.5 bg-white/60 hover:bg-white/70 backdrop-blur-xl text-gray-700 text-sm rounded-xl transition-all border border-white/80 shadow-lg"
           >
@@ -221,7 +221,7 @@ export default component$(() => {
         <div class="text-center mt-8 text-gray-500 text-sm">
           <p>Powered by Qwik + Ethers.js</p>
           <p class="text-xs mt-1 text-gray-400">
-            Currently supports verified contracts on Sepolia network with a single string-returning view function.
+            Currently supports verified contracts on Ethereum Mainnet with a single string-returning view function.
           </p>
         </div>
       </div>
